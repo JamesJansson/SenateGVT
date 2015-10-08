@@ -9,11 +9,11 @@ function BallotPaper(NumberOfVotes, TransferValue, CurrentPosition, GVT){
 }
 
 BallotPaper.prototype.EffectiveVotes = function(){ 
-	return this.NumberOfVotes=this.TransferValue;
+	return this.NumberOfVotes*this.TransferValue;
 }
 
-BallotPaper.prototype.Party = function(){ 
-	return this.NumberOfVotes=this.TransferValue;
+BallotPaper.prototype.CurrentParty = function(){ 
+	return this.GVT[CurrentPosition];
 }
 
 
@@ -22,13 +22,20 @@ BallotPaper.prototype.SpawnNewBallotPaper = function(ProportionToTransfer, Array
 	
 	// find the next party that has not been excluded 
 	var Count=CurrentPosition;
-	while ( && this.GVT.length){
+	var PartyFound=false;
+	while (PartyFound==false && Count<this.GVT.length){
 		Count++;
 		if (ArrayOfParties[Count].CurrentlyEliminated==false){
-			
+			// Add the 
+			PartyFound=true;
 		}
 	}
-	var 
+	if (PartyFound){
+		var NewBallotPaper= new BallotPaper(this.NumberOfVotes, NewTransferValue, Count, this.GVT);
+		return NewBallotPaper;
+	}
+	
+	return NaN;// else the votes simply expire
 }
 
 
@@ -76,7 +83,7 @@ PolitcialParty.prototype.Elect = function(ProportionNeededToElect){
 	}
 }
 
-PolitcialParty.prototype.Elminate = function(){ // called when at the bottom of hte list of parties
+PolitcialParty.prototype.Eliminate = function(){ // called when at the bottom of hte list of parties
 	this.CurrentlyEliminated=true;
 	
 	this.TransferPreferences();
@@ -86,6 +93,19 @@ PolitcialParty.prototype.Elminate = function(){ // called when at the bottom of 
 
 
 PolitcialParty.prototype.TransferPreferences = function(){
+	// go through all the ballot papers that this individual has accumulated
+	for (var BallotCount in this.BallotPaperArray){
+	
+		var NewBallotPaper=this.BallotPaperArray.SpawnNewBallotPaper();
+		if (isNaN(NewBallotPaper)==false){// if a BallotPaper is spawned
+			// Determine which party is is supposed to go to
+			var PartyRef=NewBallotPaper.CurrentParty();
+			
+			this.PartyArray[PartyRef].AddBallotPaper(NewBallotPaper);
+		}
+	}
+
+
 	// go down the list, seeing if the party is currently eliminated
 	
 	//while?
@@ -110,6 +130,7 @@ function Election(TotalVotes, SenatorsForElection, PartyDetails, PartyVotes, Par
 	this.PartyArray=[];
 	this.VotingData;
 	this.TotalVotes=TotalVotes;
+	this.SenatorsForElection=SenatorsForElection;
 	this.Quota=Math.ceil(TotalVotes/(SenatorsForElection+1));
 }
 
@@ -123,25 +144,54 @@ Election.proto.CreateParties=function(){
 }
 
 Election.proto.RunElection =function(){
-	
-	for (){
+	var SenatorsElected=0;
+	var PartiesElectedArray=[];
+	while (SenatorsElected<this.SenatorsForElection){
 		// Try to elect someone
-		// Sort all the parties by their primary
+		var PartiesNotEliminated=[];
+		for (var PartyID in this.PartyArray){
+			var CurrentParty=this.PartyArray[PartyID]; 
+			if (CurrentParty.CurrentlyEliminated==false){
+				PartiesNotEliminated.push(CurrentParty);
+			}
+		}
 		
+		
+		// Find the max party with votes
+		var TopVotes=0;
+		for (var PartyID in this.PartyArray){
+			var CurrentParty=this.PartyArray[PartyID];
+			if (CurrentParty.CurrentlyEliminated==false){
+				
+			}
+		}
 		// if the top one has enough for a quota
-		
-		// Elect the person
+			SenatorsElected++;
+			// Elect the person
 		
 		// 
 		
-		
-		// If there are only two parties that remain
-		
+		else if (PartiesNotEliminated.length<=2){// If there are only two parties that remain
+			
+			
+			if {
+				// find the biggest player
+				var 
+				
+				
+				Top.Elect;
+				SenatorsElected++;
+			}
+			
 		//
-		
-		
+		}
+		else{// eliminate the lowest count in the list of those not eliminated
+			
+			MinParty.Eliminate();
+			
+			this.Party
+		}
 	}
-	
 }
 
 
