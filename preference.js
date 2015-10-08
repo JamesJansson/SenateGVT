@@ -16,22 +16,24 @@ BallotPaper.prototype.CurrentParty = function(){
 	return this.GVT[CurrentPosition];
 }
 
+BallotPaper.prototype.MultiplyTransferValue=function(ProportionToTransfer){
+	this.TransferValue=this.TransferValue*ProportionToTransfer;
+}
 
-BallotPaper.prototype.SpawnNewBallotPaper = function(ProportionToTransfer, ArrayOfParties){ 
-	var NewTransferValue=this.TransferValue*ProportionToTransfer;
+BallotPaper.prototype.SpawnNewBallotPaper = function( ArrayOfParties){ 
 	
 	// find the next party that has not been excluded 
-	var Count=CurrentPosition;
+	var NewGVTPos=CurrentPosition;
 	var PartyFound=false;
-	while (PartyFound==false && Count<this.GVT.length){
-		Count++;
-		if (ArrayOfParties[Count].CurrentlyEliminated==false){
+	while (PartyFound==false && NewGVTPos<this.GVT.length){
+		NewGVTPos++;
+		if (ArrayOfParties[NewGVTPos].CurrentlyEliminated==false){
 			// Add the 
 			PartyFound=true;
 		}
 	}
 	if (PartyFound){
-		var NewBallotPaper= new BallotPaper(this.NumberOfVotes, NewTransferValue, Count, this.GVT);
+		var NewBallotPaper= new BallotPaper(this.NumberOfVotes, this.TransferValue, NewGVTPos, this.GVT);
 		return NewBallotPaper;
 	}
 	
@@ -52,7 +54,7 @@ function PolitcialParty(Name, ID, PrimaryVote, PointerToThePartyArray){
 	this.BallotPaperArray=[];// an array of ballots 
 	
 	this.CurrentlyEliminated=false;
-	this.Elected=false;
+	this.Elected=0;
 	
 	this.FriendlyGroup;
 }
@@ -61,7 +63,7 @@ PolitcialParty.prototype.AddGVT = function(GVT){
 	this.GVT.push=GVT;// there can be up to 3 GVTs per group.
 }
 
-PolitcialParty.prototype.AddGVTToOwnBallots = function(){ 
+PolitcialParty.prototype.CreateOwnBallots = function(){ 
 	var NumberOfGVTs=this.GVT.length;
 	var PerGVTTransferValue=1/NumberOfGVTs;
 	for (var GVTCount in this.GVT){
@@ -69,6 +71,16 @@ PolitcialParty.prototype.AddGVTToOwnBallots = function(){
 		this.BallotPaperArray.push(OwnGVT);
 	}
 }
+
+PoliticalParty.prototype.TotalEffectiveVotes=function(){
+	var TotalVotes=0;
+	// go through the list of their own ballots
+	for (var BallotCount in this.BallotPapers){
+		TotalVotes+=this.BallotPapers[BallotCount].EffectiveVotes();
+	}
+	return TotalVotes;
+}
+
 
 
 PoliticalParty.Prototype.SetFriendlyGroup = function(GroupID){ 
@@ -96,7 +108,7 @@ PolitcialParty.prototype.TransferPreferences = function(){
 	// go through all the ballot papers that this individual has accumulated
 	for (var BallotCount in this.BallotPaperArray){
 	
-		var NewBallotPaper=this.BallotPaperArray.SpawnNewBallotPaper();
+		var NewBallotPaper=this.BallotPaperArray.SpawnNewBallotPaper(1, );
 		if (isNaN(NewBallotPaper)==false){// if a BallotPaper is spawned
 			// Determine which party is is supposed to go to
 			var PartyRef=NewBallotPaper.CurrentParty();
@@ -156,23 +168,33 @@ Election.proto.RunElection =function(){
 			}
 		}
 		
-		
-		// Find the max party with votes
+		// Find the party with max and min votes
 		var TopVotes=0;
-		for (var PartyID in this.PartyArray){
-			var CurrentParty=this.PartyArray[PartyID];
-			if (CurrentParty.CurrentlyEliminated==false){
-				
+		var TopParty;
+		var BottomVotes=1e20;
+		var BottomParty;
+		for (var PartyCount in PartiesNotEliminated){
+			var CurrentParty=PartiesNotEliminated[PartiesNotEliminated];
+			CurrentPartyVotes=CurrentParty.TotalEffectiveVotes();
+			if (CurrentPartyVotes>TopVotes){
+				TopVotes=CurrentPartyVotes;
+				TopParty=CurrentParty;
+			}
+			if (CurrentPartyVotes<BottomVotes){
+				BottomVotes=CurrentPartyVotes;
+				BottomParty=CurrentParty;
 			}
 		}
+		
+		
 		// if the top one has enough for a quota
+		if (TopVotes>=this.Quota){
 			SenatorsElected++;
-			// Elect the person
-		
-		// 
-		
+			var ProportionNeededToElect=TopVotes/this.Quota;
+			TopParty.Elect(ProportionNeededToElect);// Elect the person
+		}
 		else if (PartiesNotEliminated.length<=2){// If there are only two parties that remain
-			
+			PartiesNotEliminated[0]
 			
 			if {
 				// find the biggest player
