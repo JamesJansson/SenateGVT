@@ -88,7 +88,7 @@ PoliticalParty.prototype.TotalEffectiveVotes=function(){
 
 
 
-PoliticalParty.Prototype.SetFriendlyGroup = function(GroupID){ 
+PoliticalParty.prototype.SetFriendlyGroup = function(GroupID){ 
 	this.GroupID=GroupID;
 }
 
