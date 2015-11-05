@@ -1,11 +1,15 @@
 // Copyright James Jansson
 // If you have been given this code, it is for your personal use only. You may not transfer it to any other individual without seeking permission of James Jansson. 
 
-function BallotPaper(NumberOfVotes, TransferValue, CurrentPosition, GVT){
+function BallotPaper(NumberOfVotes, TransferValue, CurrentPosition, PreferenceList){
+	// A BallotPaper can represent either a single or multiple ballot papers with the smae preference instruction
+	
+	
+	
 	this.NumberOfVotes=NumberOfVotes;
 	this.TransferValue=TransferValue;
 	this.CurrentPosition=CurrentPosition;
-	this.GVT=GVT;
+	this.PreferenceList=PreferenceList;
 }
 
 BallotPaper.prototype.EffectiveVotes = function(){ 
@@ -13,7 +17,7 @@ BallotPaper.prototype.EffectiveVotes = function(){
 }
 
 BallotPaper.prototype.CurrentParty = function(){ 
-	return this.GVT[CurrentPosition];
+	return this.PreferenceList[this.CurrentPosition];
 }
 
 BallotPaper.prototype.MultiplyTransferValue=function(ProportionToTransfer){
@@ -23,17 +27,17 @@ BallotPaper.prototype.MultiplyTransferValue=function(ProportionToTransfer){
 BallotPaper.prototype.SpawnNewBallotPaper = function( ArrayOfParties){ 
 	
 	// find the next party that has not been excluded 
-	var NewGVTPos=CurrentPosition;
+	var NewPreferenceListPos=CurrentPosition;
 	var PartyFound=false;
-	while (PartyFound==false && NewGVTPos<this.GVT.length){
-		NewGVTPos++;
-		if (ArrayOfParties[NewGVTPos].CurrentlyEliminated==false){
+	while (PartyFound==false && NewPreferenceListPos<this.PreferenceList.length){
+		NewPreferenceListPos++;
+		if (ArrayOfParties[NewPreferenceListPos].CurrentlyEliminated==false){
 			// Add the 
 			PartyFound=true;
 		}
 	}
 	if (PartyFound){
-		var NewBallotPaper= new BallotPaper(this.NumberOfVotes, this.TransferValue, NewGVTPos, this.GVT);
+		var NewBallotPaper= new BallotPaper(this.NumberOfVotes, this.TransferValue, NewPreferenceListPos, this.PreferenceList);
 		return NewBallotPaper;
 	}
 	
@@ -43,15 +47,15 @@ BallotPaper.prototype.SpawnNewBallotPaper = function( ArrayOfParties){
 
 
 
-function PolitcialParty(Name, ID, PrimaryVote, PointerToThePartyArray){
-	this.Name=Name;// Long name
+function PolitcialParty(ID, Name, PrimaryVote, PointerToThePartyArray){
 	this.ID=ID;// party abbreviation
+	this.Name=Name;// Long name
 	this.PrimaryVote=PrimaryVote;
 	this.PartyArray=PointerToThePartyArray;
 		
 	this.GVT=[];// list of parties (numbers)
 
-	this.BallotPaperArray=[];// an array of ballots 
+	this.BallotPaperArray=[];// an array of ballots that the party accumulates
 	
 	this.CurrentlyEliminated=false;
 	this.Elected=0;
@@ -67,6 +71,7 @@ PolitcialParty.prototype.CreateOwnBallots = function(){
 	var NumberOfGVTs=this.GVT.length;
 	var PerGVTTransferValue=1/NumberOfGVTs;
 	for (var GVTCount in this.GVT){
+		var CurrentPosition=0;//self
 		var OwnGVT=new BallotPaper(this.PrimaryVote, PerGVTTransferValue, CurrentPosition, this.GVT[GVTCount]);
 		this.BallotPaperArray.push(OwnGVT);
 	}
@@ -108,7 +113,7 @@ PolitcialParty.prototype.TransferPreferences = function(){
 	// go through all the ballot papers that this individual has accumulated
 	for (var BallotCount in this.BallotPaperArray){
 	
-		var NewBallotPaper=this.BallotPaperArray.SpawnNewBallotPaper(1, );
+		var NewBallotPaper=this.BallotPaperArray[BallotCount].SpawnNewBallotPaper(1, );
 		if (isNaN(NewBallotPaper)==false){// if a BallotPaper is spawned
 			// Determine which party is is supposed to go to
 			var PartyRef=NewBallotPaper.CurrentParty();
@@ -123,7 +128,7 @@ PolitcialParty.prototype.TransferPreferences = function(){
 	//while?
 	for (var P in this.PreferenceList){
 		var PartyID=this.PreferenceList[P];
-		if (this.PartyArray.PartyID.CurrentlyEliminated==true){
+		if (this.PartyArray[PartyID].CurrentlyEliminated==true){
 			
 		}
 	}
@@ -138,26 +143,43 @@ function ProcessPreferences(){
 
 }
 
-function Election(TotalVotes, SenatorsForElection, PartyDetails, PartyVotes, PartyGVTs){
-	this.PartyArray=[];
+function Election(NumSenatorsForElection, PartyDetails, PartyVotes, PartyGVTs){
+	this.PartyArray=[];// an array of parties stored by reference to their acronym e.g. this.PartyArray['FP'], this.PartyArray['LIB']
 	this.VotingData;
-	this.TotalVotes=TotalVotes;
-	this.SenatorsForElection=SenatorsForElection;
+	this.TotalVotes;
+	this.SenatorsForElection=NumSenatorsForElection;
 	this.Quota=Math.ceil(TotalVotes/(SenatorsForElection+1));
+	
+	this.ElectionResult;
 }
 
 
-Election.proto.CreateParties=function(){
-	PartyArray=[];
-	// function add party to party array
-	for (){
-		var a=new PolitcialParty(Name, PrimaryVote, PartyArray);
+Election.proto.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
+	// add party to party array
+	this.PartyArray=[];
+	
+	this.TotalVotes=0;
+	
+	for (var PCount in IDArray){
+		var ID=IDArray[PCount];
+		var Name=NameArray[PCount];
+		var PrimaryVote=PrimaryVoteArray[PCount];
+		
+		var a=new PolitcialParty(ID, Name, PrimaryVote, this.PartyArray);
+		
+		// Store the party under its ID		
+		this.PartyArray[ID]=a;
+		
+		// Sum up the total votes
+		this.TotalVotes+=PrimaryVote;
 	}
 }
 
 Election.proto.RunElection =function(){
+	this.ElectionResult={};
+	this.ElectionResult.ElectedParties=[];
+	
 	var SenatorsElected=0;
-	var PartiesElectedArray=[];
 	while (SenatorsElected<this.SenatorsForElection){
 		// Try to elect someone
 		var PartiesNotEliminated=[];
@@ -174,7 +196,7 @@ Election.proto.RunElection =function(){
 		var BottomVotes=1e20;
 		var BottomParty;
 		for (var PartyCount in PartiesNotEliminated){
-			var CurrentParty=PartiesNotEliminated[PartiesNotEliminated];
+			var CurrentParty=PartiesNotEliminated[PartyCount];
 			CurrentPartyVotes=CurrentParty.TotalEffectiveVotes();
 			if (CurrentPartyVotes>TopVotes){
 				TopVotes=CurrentPartyVotes;
@@ -192,18 +214,19 @@ Election.proto.RunElection =function(){
 			SenatorsElected++;
 			var ProportionNeededToElect=TopVotes/this.Quota;
 			TopParty.Elect(ProportionNeededToElect);// Elect the person
+			this.ElectionResult.ElectedParties.push(TopParty.ID);
 		}
 		else if (PartiesNotEliminated.length<=2){// If there are only two parties that remain
 			PartiesNotEliminated[0]
 			
-			if {
-				// find the biggest player
-				var 
+			// if (false) {/////////////////////
+			// 	// find the biggest player
+			// 	var 
 				
 				
-				Top.Elect;
-				SenatorsElected++;
-			}
+			// 	Top.Elect;
+			// 	SenatorsElected++;
+			// }
 			
 		//
 		}
@@ -215,6 +238,27 @@ Election.proto.RunElection =function(){
 		}
 	}
 }
+
+
+function ExampleSimulation(){
+	var NumberOfElections=100;
+	var NumberOfParties=4;
+	
+	var IDArray=['AA', 'BB', 'CC', 'DD'];
+	var NameArray=['Ayes', 'Bees', 'Seas', 'Deez'];
+	
+	
+	var PrimaryVoteArray=[Math.floor(10000*Math.random()), Math.floor(10000*Math.random()), Math.floor(10000*Math.random()), Math.floor(10000*Math.random())];
+	
+	
+	
+}
+
+
+
+
+
+
 
 
 function DealPreferences(){
