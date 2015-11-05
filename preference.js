@@ -183,7 +183,13 @@ Election.prototype.RunElection =function(){
 	this.Result.Elimination=[];
 	
 	var SenatorsElected=0;
+	
+	var Round=0;
+	
 	while (SenatorsElected<this.SenatorsForElection){
+		Round++;
+		
+		
 		// Try to elect someone
 		var PartiesNotEliminated=[];
 		for (var PartyID in this.PartyArray){
@@ -211,6 +217,11 @@ Election.prototype.RunElection =function(){
 			}
 		}
 		
+		console.log("Round:"+Round);
+		console.log("TopParty");
+		console.log(TopParty);
+		console.log("BottomParty");
+		console.log(BottomParty);
 		
 		// if the top one has enough for a quota
 		if (TopVotes>=this.Quota){
