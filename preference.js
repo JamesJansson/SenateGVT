@@ -180,6 +180,7 @@ Election.prototype.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 Election.prototype.RunElection =function(){
 	this.Result={};
 	this.Result.ElectedParties=[];
+	this.Result.Elimination=[];
 	
 	var SenatorsElected=0;
 	while (SenatorsElected<this.SenatorsForElection){
@@ -218,25 +219,16 @@ Election.prototype.RunElection =function(){
 			TopParty.Elect(ProportionNeededToElect);// Elect the person
 			this.Result.ElectedParties.push(TopParty.ID);
 		}
-		else if (PartiesNotEliminated.length<=2){// If there are only two parties that remain
-			PartiesNotEliminated[0]
-			
-			// if (false) {/////////////////////
-			// 	// find the biggest player
-			// 	var 
-				
-				
-			// 	Top.Elect;
-			// 	SenatorsElected++;
-			// }
-			
+		else if (PartiesNotEliminated.length==1){// If there are only two parties that remain
+			SenatorsElected++;
+			var ProportionNeededToElect=1;
+			TopParty.Elect(ProportionNeededToElect);// Elect the person
+			this.Result.ElectedParties.push(TopParty.ID);
 		//
 		}
 		else{// eliminate the lowest count in the list of those not eliminated
-			
-			MinParty.Eliminate();
-			
-			this.Party
+			BottomParty.Eliminate();
+			this.Result.Elimination=BottomParty.ID;
 		}
 	}
 }
