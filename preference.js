@@ -278,34 +278,34 @@ function ExampleSimulation(){
 
 
 
-function DealPreferences(){
-	// Each party swaps similar positions in the preferences
-	for (var Pos=2; Pos<PartyArray.length; Pos++){
-		if (LeftGroup==true){
-			if (PositionsInLeftGroupRemain){
-				//find parties that have not yet traded with
+// function DealPreferences(){
+// 	// Each party swaps similar positions in the preferences
+// 	for (var Pos=2; Pos<PartyArray.length; Pos++){
+// 		if (LeftGroup==true){
+// 			if (PositionsInLeftGroupRemain){
+// 				//find parties that have not yet traded with
 				
-				if (RogueGroup){// not used derogatory, more to mean going your own way
-				}
-			}
-		}
-		if (Scenario==1){// randomly swap 
-		}
-		if (){// swap according to nearest vote level
+// 				if (RogueGroup){// not used derogatory, more to mean going your own way
+// 				}
+// 			}
+// 		}
+// 		if (Scenario==1){// randomly swap 
+// 		}
+// 		if (){// swap according to nearest vote level
 		
-		}
-		if (Scenario==2){//swap from bottom up (smallest first for a single party)
-		}
-		if (Scenario==3){//two groups
-		}
-		if (){// two groups with levels that 
-		}
-	//
-	}
-}
+// 		}
+// 		if (Scenario==2){//swap from bottom up (smallest first for a single party)
+// 		}
+// 		if (Scenario==3){//two groups
+// 		}
+// 		if (){// two groups with levels that 
+// 		}
+// 	//
+// 	}
+// }
 
-Victoria.Party=[];
-Victoria.Party[0]={};
-Victoria.Party[0].Name='LNP';
-Victoria.Party[1].PrimaryVote=2000000;
+// Victoria.Party=[];
+// Victoria.Party[0]={};
+// Victoria.Party[0].Name='LNP';
+// Victoria.Party[1].PrimaryVote=2000000;
 
