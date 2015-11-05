@@ -47,7 +47,7 @@ BallotPaper.prototype.SpawnNewBallotPaper = function( ArrayOfParties){
 
 
 
-function PolitcialParty(ID, Name, PrimaryVote, PointerToThePartyArray){
+function PoliticalParty(ID, Name, PrimaryVote, PointerToThePartyArray){
 	this.ID=ID;// party abbreviation
 	this.Name=Name;// Long name
 	this.PrimaryVote=PrimaryVote;
@@ -63,11 +63,11 @@ function PolitcialParty(ID, Name, PrimaryVote, PointerToThePartyArray){
 	this.FriendlyGroup;
 }
 
-PolitcialParty.prototype.AddGVT = function(GVT){ 
+PoliticalParty.prototype.AddGVT = function(GVT){ 
 	this.GVT.push=GVT;// there can be up to 3 GVTs per group.
 }
 
-PolitcialParty.prototype.CreateOwnBallots = function(){ 
+PoliticalParty.prototype.CreateOwnBallots = function(){ 
 	var NumberOfGVTs=this.GVT.length;
 	var PerGVTTransferValue=1/NumberOfGVTs;
 	for (var GVTCount in this.GVT){
@@ -92,7 +92,7 @@ PoliticalParty.Prototype.SetFriendlyGroup = function(GroupID){
 	this.GroupID=GroupID;
 }
 
-PolitcialParty.prototype.Elect = function(ProportionNeededToElect){
+PoliticalParty.prototype.Elect = function(ProportionNeededToElect){
 	this.Elected++;
 	var ProportionToTransferToSelf=1-ProportionNeededToElect;
 	for (var BallotPaperCount in this.BallotPaperArray){
@@ -100,7 +100,7 @@ PolitcialParty.prototype.Elect = function(ProportionNeededToElect){
 	}
 }
 
-PolitcialParty.prototype.Eliminate = function(){ // called when at the bottom of hte list of parties
+PoliticalParty.prototype.Eliminate = function(){ // called when at the bottom of hte list of parties
 	this.CurrentlyEliminated=true;
 	
 	this.TransferPreferences();
@@ -109,7 +109,7 @@ PolitcialParty.prototype.Eliminate = function(){ // called when at the bottom of
 
 
 
-PolitcialParty.prototype.TransferPreferences = function(){
+PoliticalParty.prototype.TransferPreferences = function(){
 	// go through all the ballot papers that this individual has accumulated
 	for (var BallotCount in this.BallotPaperArray){
 	
