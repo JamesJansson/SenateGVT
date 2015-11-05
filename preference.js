@@ -154,7 +154,7 @@ function Election(NumSenatorsForElection){
 }
 
 
-Election.proto.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
+Election.prototype.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 	// add party to party array
 	this.PartyArray=[];
 	
@@ -177,7 +177,7 @@ Election.proto.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 	this.Quota=Math.ceil(this.TotalVotes/(this.SenatorsForElection+1))
 }
 
-Election.proto.RunElection =function(){
+Election.prototype.RunElection =function(){
 	this.ElectionResult={};
 	this.ElectionResult.ElectedParties=[];
 	
