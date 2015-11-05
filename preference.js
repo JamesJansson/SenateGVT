@@ -113,7 +113,7 @@ PolitcialParty.prototype.TransferPreferences = function(){
 	// go through all the ballot papers that this individual has accumulated
 	for (var BallotCount in this.BallotPaperArray){
 	
-		var NewBallotPaper=this.BallotPaperArray[BallotCount].SpawnNewBallotPaper(1, );
+		var NewBallotPaper=this.BallotPaperArray[BallotCount].SpawnNewBallotPaper(this.PartyArray);
 		if (isNaN(NewBallotPaper)==false){// if a BallotPaper is spawned
 			// Determine which party is is supposed to go to
 			var PartyRef=NewBallotPaper.CurrentParty();
@@ -143,12 +143,12 @@ function ProcessPreferences(){
 
 }
 
-function Election(NumSenatorsForElection, PartyDetails, PartyVotes, PartyGVTs){
+function Election(NumSenatorsForElection){
 	this.PartyArray=[];// an array of parties stored by reference to their acronym e.g. this.PartyArray['FP'], this.PartyArray['LIB']
 	this.VotingData;
 	this.TotalVotes;
 	this.SenatorsForElection=NumSenatorsForElection;
-	this.Quota=Math.ceil(TotalVotes/(SenatorsForElection+1));
+	this.Quota;
 	
 	this.ElectionResult;
 }
@@ -173,6 +173,8 @@ Election.proto.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 		// Sum up the total votes
 		this.TotalVotes+=PrimaryVote;
 	}
+	
+	this.Quota=Math.ceil(this.TotalVotes/(this.SenatorsForElection+1))
 }
 
 Election.proto.RunElection =function(){
@@ -247,11 +249,26 @@ function ExampleSimulation(){
 	var IDArray=['AA', 'BB', 'CC', 'DD'];
 	var NameArray=['Ayes', 'Bees', 'Seas', 'Deez'];
 	
-	
 	var PrimaryVoteArray=[Math.floor(10000*Math.random()), Math.floor(10000*Math.random()), Math.floor(10000*Math.random()), Math.floor(10000*Math.random())];
 	
+	var GVT=[];
+	GVT['AA']=['AA', 'CC', 'DD', 'BB'];
+	GVT['BB']=['BB', 'DD', 'CC', 'AA'];
+	GVT['CC']=['CC', 'AA', 'DD', 'BB'];
+	GVT['DD']=['DD', 'DD', 'DD', 'BB'];
 	
+	var DemoElection=new Election(6);
 	
+	DemoElection.CreateParties(IDArray, NameArray, PrimaryVoteArray);
+	
+	for (var ID in GVT){
+		DemoElection.PartyArray[ID].AddGVT(GVT[ID]);
+	}
+	
+	console.log("Demo Election");
+	console.log(DemoElection);
+	
+	DemoElection.RunElection();
 }
 
 
