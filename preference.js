@@ -165,7 +165,7 @@ Election.prototype.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 		var Name=NameArray[PCount];
 		var PrimaryVote=PrimaryVoteArray[PCount];
 		
-		var a=new PolitcialParty(ID, Name, PrimaryVote, this.PartyArray);
+		var a=new PoliticalParty(ID, Name, PrimaryVote, this.PartyArray);
 		
 		// Store the party under its ID		
 		this.PartyArray[ID]=a;
