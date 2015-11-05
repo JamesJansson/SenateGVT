@@ -144,19 +144,19 @@ function ProcessPreferences(){
 }
 
 function Election(NumSenatorsForElection){
-	this.PartyArray=[];// an array of parties stored by reference to their acronym e.g. this.PartyArray['FP'], this.PartyArray['LIB']
-	this.VotingData;
+	this.PartyArray;// an array of parties stored by reference to their acronym e.g. this.PartyArray['FP'], this.PartyArray['LIB']
+
 	this.TotalVotes;
 	this.SenatorsForElection=NumSenatorsForElection;
 	this.Quota;
 	
-	this.ElectionResult;
+	this.Result;
 }
 
 
 Election.prototype.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 	// add party to party array
-	this.PartyArray=[];
+	this.PartyArray={};
 	
 	this.TotalVotes=0;
 	
@@ -178,8 +178,8 @@ Election.prototype.CreateParties=function(IDArray, NameArray, PrimaryVoteArray){
 }
 
 Election.prototype.RunElection =function(){
-	this.ElectionResult={};
-	this.ElectionResult.ElectedParties=[];
+	this.Result={};
+	this.Result.ElectedParties=[];
 	
 	var SenatorsElected=0;
 	while (SenatorsElected<this.SenatorsForElection){
@@ -216,7 +216,7 @@ Election.prototype.RunElection =function(){
 			SenatorsElected++;
 			var ProportionNeededToElect=TopVotes/this.Quota;
 			TopParty.Elect(ProportionNeededToElect);// Elect the person
-			this.ElectionResult.ElectedParties.push(TopParty.ID);
+			this.Result.ElectedParties.push(TopParty.ID);
 		}
 		else if (PartiesNotEliminated.length<=2){// If there are only two parties that remain
 			PartiesNotEliminated[0]
